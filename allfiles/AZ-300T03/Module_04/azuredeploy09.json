@@ -45,7 +45,7 @@
     "publicIPAddressName": "az3000901-pip",
     "publicIPAddressType": "Dynamic",
     "vmName": "az3000901-vm",
-    "vmSize": "Standard_DS1_v2",
+    "vmSize": "Standard_D2s_v3",
     "virtualNetworkName": "az3000901-vnet",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
   },

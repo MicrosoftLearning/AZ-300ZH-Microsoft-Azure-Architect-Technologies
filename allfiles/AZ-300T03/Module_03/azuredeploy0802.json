@@ -11,14 +11,14 @@
     },
     "networkInterfaceName": {
       "type": "string",
-      "defaultValue": "az3000801-nic",
+      "defaultValue": "az3000802-nic",
       "metadata": {
         "description": "This is the prefix name of the Network interfaces"
       }
     },
     "vmNamePrefix": {
       "type": "string",
-      "defaultValue": "az3000801-vm",
+      "defaultValue": "az3000802-vm",
       "metadata": {
         "description": "Prefix to use for VM names"
       }
@@ -58,34 +58,21 @@
     },
     "vmSize": {
       "type": "string",
-      "defaultValue": "Standard_DS1_v2",
+      "defaultValue": "Standard_D2s_v3",
       "metadata": {
         "description": "This is the VM size"
-      }
-    },
-    "modulesUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "URL for the DSC configuration module"
-      }
-    },
-    "configurationFunction": {
-      "type": "string",
-      "defaultValue": "ContosoWebsite.ps1\\ContosoWebsite",
-      "metadata": {
-        "description": "DSC configuration function to call"
       }
     }
   },
   "variables": {
-    "availabilitySetName": "az3000801-avset",
+    "availabilitySetName": "az3000802-avset",
     "subnet0Name": "web",
     "subnet1Name": "app",
     "subnet2Name": "database",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',parameters('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables ('subnet0Name'))]",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables ('subnet1Name'))]",
     "numberOfInstances": 2,
-    "networkSecurityGroupName": "az3000801-web-nsg",
+    "networkSecurityGroupName": "az3000802-web-nsg",
     "vmExtensionName": "dscExtension"
   },
   "resources": [
@@ -229,50 +216,9 @@
               "sourcePortRange": "*",
               "destinationAddressPrefix": "*"
             }
-          },
-          {
-            "name": "custom-allow-http",
-            "properties": {
-              "priority": 1100,
-              "sourceAddressPrefix": "*",
-              "protocol": "Tcp",
-              "destinationPortRange": "80",
-              "access": "Allow",
-              "direction": "Inbound",
-              "sourcePortRange": "*",
-              "destinationAddressPrefix": "*"
-            }
           }
         ]
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmNamePrefix'), copyindex(), '/', variables('vmExtensionName'))]",
-      "copy": {
-        "name": "virtualMachineExtensionLoop",
-        "count": "[variables('numberOfInstances')]"
-      },
-      "apiVersion": "2018-06-01",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), copyindex())]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Powershell",
-        "type": "DSC",
-        "typeHandlerVersion": "2.76",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "ModulesUrl": "[parameters('modulesUrl')]",
-          "ConfigurationFunction": "[parameters('configurationFunction')]",
-          "Properties": {
-            "MachineName": "[concat(parameters('vmNamePrefix'), copyindex())]"
-          }
-        },
-        "protectedSettings": null
       }
     }
   ]
 }
-
